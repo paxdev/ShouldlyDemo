@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
 
@@ -40,15 +42,15 @@ public class XUnitSamples
 
     class Throws
     {
-        public void GetResult() => throw new ArgumentOutOfRangeException();
+        public async Task GetResult() => throw new ArgumentOutOfRangeException();
     }
 
     [Fact]
-    public void _6_ExceptionAssertion()
+    public async Task _6_ExceptionAssertion()
     {
         var sut = new Throws();
 
-        var thrown = Should.Throw<ArgumentNullException>(sut.GetResult);
+        var thrown = await Should.ThrowAsync<ArgumentNullException>(sut.GetResult);
 
         thrown.ParamName.ShouldBe("expected");
     }
@@ -66,6 +68,18 @@ public class XUnitSamples
             () => response.StatusCode.ShouldBe(200),
             () => repository.RecordCount.ShouldBe(2),
             () => logs.Entries.ShouldContain(e => e.Message == "Success")
+        );
+    }
+
+    [Fact]
+    public void _8_TimedTests()
+    {
+        Should.CompleteIn(() =>
+            {
+                Thread.Sleep(2000);
+                3.ShouldBe(4);
+            },
+            TimeSpan.FromSeconds(1)
         );
     }
 }

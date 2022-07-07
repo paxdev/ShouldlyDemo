@@ -49,6 +49,12 @@ public class EnumerableTests
     }
 
     [Fact]
+    public void ShouldBeOneOf()
+    {
+        "Charlie".ShouldNotBeOneOf(_names);
+    }
+
+    [Fact]
     public void ShouldAllBe()
     {
         _objects.ShouldAllBe(s => s.Value == 1);
